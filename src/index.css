@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-void font-sans text-slate-200 antialiased;
+  }
+  ::selection {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+  }
+  /* Slim, unobtrusive scrollbars to match the structural aesthetic */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #262626 transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-thumb {
+    background: #262626;
+    border-radius: 999px;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background: #3d3d3d;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+@layer components {
+  .kbd {
+    @apply rounded-md border border-white/15 bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-mist;
+  }
+
+  /* Render-culling for very large grids: offscreen cards skip layout AND
+     paint; `auto` makes contain-intrinsic-size remember the last rendered
+     size, so the scrollbar stays rock steady while scrolling. */
+  .cv-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 440px;
+  }
+
+  /* Neutral stage for live previews: subtle dot matrix on near-black */
+  .sandbox-grid {
+    background-color: #0a0a12;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1px, transparent 1px);
+    background-size: 18px 18px;
+  }
+
+  /* Skeleton shimmer sweep */
+  .skeleton {
+    background: linear-gradient(90deg, #15151f 25%, #24243a 50%, #15151f 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.8s linear infinite;
+  }
+
+  /* Neon glow CTA — flicker + breathing shadow */
+  .neon-btn {
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    letter-spacing: 0.25em;
+    color: #67e8f9;
+    background: rgba(8, 145, 178, 0.07);
+    border: 1px solid rgba(103, 232, 249, 0.55);
+    text-shadow: 0 0 8px rgba(103, 232, 249, 0.9), 0 0 26px rgba(34, 211, 238, 0.45);
+    box-shadow: inset 0 0 14px rgba(34, 211, 238, 0.16), 0 0 20px rgba(34, 211, 238, 0.2);
+    animation: neon-flicker 4s infinite;
+    transition:
+      color 0.3s,
+      background 0.3s,
+      box-shadow 0.3s;
+  }
+  .neon-btn:hover {
+    color: #fff;
+    background: rgba(34, 211, 238, 0.12);
+    box-shadow: inset 0 0 20px rgba(34, 211, 238, 0.32), 0 0 36px rgba(34, 211, 238, 0.5);
+  }
+
+  /* Cursor-tracking spotlight input */
+  .spot-input {
+    position: relative;
+    background:
+      radial-gradient(180px circle at var(--sx, 50%) var(--sy, 50%), rgba(139, 92, 246, 0.22), transparent 62%),
+      rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    transition:
+      border-color 0.3s,
+      box-shadow 0.3s;
+  }
+  .spot-input:focus-within {
+    border-color: rgba(139, 92, 246, 0.65);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16), 0 0 34px rgba(139, 92, 246, 0.14);
+  }
+
+  /* Cyberpunk glitch button — two RGB-split layers clip-animated in CSS */
+  .glitch-btn {
+    position: relative;
+    overflow: hidden;
+    padding: 1rem 2.4rem;
+    font-family: 'JetBrains Mono', ui-monospace, monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    color: #fff;
+    background: #0a0a14;
+    border: 1px solid rgba(34, 211, 238, 0.45);
+    cursor: pointer;
+  }
+  .glitch-btn::before,
+  .glitch-btn::after {
+    content: attr(data-text);
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+  .glitch-btn::before {
+    color: #22d3ee;
+    animation: glitch-a 2.8s steps(2, jump-none) infinite;
+  }
+  .glitch-btn::after {
+    color: #e879f9;
+    animation: glitch-b 2.8s steps(2, jump-none) infinite;
+  }
+  .glitch-btn:hover::before {
+    animation-duration: 0.9s;
+  }
+  .glitch-btn:hover::after {
+    animation-duration: 0.9s;
+  }
+}
+
+/* ───────────────────────── keyframes ───────────────────────── */
+
+@keyframes conic-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+/* Horizontal twin: two identical halves, -50% shift = seamless wrap */
+@keyframes marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+  to {
+    background-position: -200% 0;
+  }
+}
+
+/* Dash flow along the infinity loader — one full dash period per loop */
+@keyframes infinity-flow {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -52;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes neon-flicker {
+  0%,
+  17%,
+  21%,
+  24%,
+  52%,
+  56%,
+  100% {
+    opacity: 1;
+  }
+  19%,
+  23%,
+  54% {
+    opacity: 0.6;
+  }
+}
+
+/* 3D orbit: the whole ring system is tilted on X, then spun on its own
+   normal (Z) — the dot riding the rim traces a tilted ellipse. */
+@keyframes orbit-tilt {
+  from {
+    transform: rotateX(var(--tilt, 70deg)) rotateZ(0turn);
+  }
+  to {
+    transform: rotateX(var(--tilt, 70deg)) rotateZ(1turn);
+  }
+}
+
+@keyframes glitch-a {
+  0%,
+  100% {
+    clip-path: inset(0 0 92% 0);
+    transform: translate(-2px, -1px);
+    opacity: 0.7;
+  }
+  10% {
+    clip-path: inset(38% 0 44% 0);
+    transform: translate(3px, 1px);
+  }
+  20% {
+    clip-path: inset(76% 0 8% 0);
+    transform: translate(-3px, 0);
+  }
+  30% {
+    clip-path: inset(14% 0 72% 0);
+    transform: translate(2px, 2px);
+  }
+  45% {
+    clip-path: inset(52% 0 34% 0);
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    clip-path: inset(28% 0 58% 0);
+    transform: translate(3px, -1px);
+  }
+  75% {
+    clip-path: inset(86% 0 4% 0);
+    transform: translate(-3px, 1px);
+  }
+  90% {
+    clip-path: inset(6% 0 80% 0);
+    transform: translate(2px, 1px);
+  }
+}
+
+@keyframes glitch-b {
+  0%,
+  100% {
+    clip-path: inset(84% 0 0 0);
+    transform: translate(2px, 1px);
+    opacity: 0.7;
+  }
+  12% {
+    clip-path: inset(8% 0 74% 0);
+    transform: translate(-3px, -1px);
+  }
+  28% {
+    clip-path: inset(46% 0 40% 0);
+    transform: translate(3px, 2px);
+  }
+  42% {
+    clip-path: inset(68% 0 16% 0);
+    transform: translate(-2px, -22px);
+  }
+  58% {
+    clip-path: inset(20% 0 64% 0);
+    transform: translate(2px, 1px);
+  }
+  72% {
+    clip-path: inset(4% 0 78% 0);
+    transform: translate(-3px, 0);
+  }
+  88% {
+    clip-path: inset(56% 0 26% 0);
+    transform: translate(2px, -2px);
+  }
+}
+
+/* ── Reduced motion (JS-independent CSS layer) ──────────────────────────
+   MotionConfig covers framer-motion; this collapses pure-CSS animation
+   (loaders, marquees, glitch slices, scan lines, pulse dots) for users
+   with prefers-reduced-motion: reduce. Timing is kept non-zero (0.01ms)
+   so animationend listeners still fire instead of hanging forever. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
